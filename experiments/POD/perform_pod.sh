@@ -1,4 +1,5 @@
 mkdir -p singularvalues
+mkdir -p results
 
 echo "GAUSSIAN" 
 echo "##########################"

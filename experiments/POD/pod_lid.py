@@ -31,7 +31,7 @@ data = LidCavity()
 snap_training = 240
 key = 'u'
 
-inputs = data.snapshots['u']
+inputs = data.snapshots[key]
 parameters = data.params
 
 N_snap = inputs.shape[0]
@@ -74,17 +74,20 @@ input_dim = inputs.shape[1]
 db_training = Database(params_training, snapshots_training)
 db_testing = Database(params_testing, snapshots_testing)
 
-method = {"RBF": RBF(),
-          "ANN": ANN([60, 60], nn.Tanh(), [10000, 1e-12])}
+method = {"RBF": RBF,
+          "ANN": ANN}
 
-dimensions = [8, 16, 24, 32, 64, 80, 120]
+dimensions = [16, 64, 120]
 
 for dim in dimensions:
 
     for key, interp in method.items():
 
         pod = POD('svd', rank=dim)
-        rbf = interp
+        if key == "ANN":
+            rbf = interp([24, 60], nn.ReLU(), [20000, 1e-12])
+        else:
+            rbf = interp()
         rom = ROM(db_training, pod, rbf)
         rom.fit()
 
@@ -105,7 +108,10 @@ for dim in dimensions:
                  function_encoder=nn.ReLU(),
                  function_decoder=nn.ReLU(),
                  stop_training=[200, 1e-12])
-        rbf = interp
+        if key == "ANN":
+            rbf = interp([24, 60], nn.ReLU(), [20000, 1e-12])
+        else:
+            rbf = interp()
         rom = ROM(db_training, pod, rbf)
         rom.fit()
 
@@ -124,4 +130,4 @@ for dim in dimensions:
 
 df_res = pd.DataFrame(
     data_res, columns=['method', 'dim', 'train %', 'test %'])
-df_res.to_csv('lid.csv')
+df_res.to_csv('results/lid.csv')

@@ -11,9 +11,10 @@ args = get_args()
 
 class ParametricGaussian(object):
 
-    def __init__(self, nx=40, ny=40, domain=[-1, 1], numpy=False) -> None:
+    def __init__(self, nx=30, ny=30, domain=[-1, 1], numpy=False) -> None:
         import torch
         import matplotlib
+        import matplotlib.tri as tri
 
         # params
         xx = torch.linspace(domain[0], domain[1], 20)
@@ -24,7 +25,7 @@ class ParametricGaussian(object):
         y = torch.linspace(domain[0], domain[1], ny)
         domain = torch.cartesian_prod(x, y)
 
-        self.triang = matplotlib.tri.Triangulation(domain[:, 0], domain[:, 1])
+        self.triang = tri.Triangulation(domain[:, 0], domain[:, 1])
 
         sol = []
         for p in params:
@@ -47,7 +48,7 @@ class ParametricGaussian(object):
 
 
 data = ParametricGaussian(numpy=True)
-snap_training = 320
+snap_training = 240
 
 inputs = data.snapshots
 parameters = data.params
@@ -92,17 +93,20 @@ input_dim = inputs.shape[1]
 db_training = Database(params_training, snapshots_training)
 db_testing = Database(params_testing, snapshots_testing)
 
-method = {"RBF": RBF(),
-          "ANN": ANN([60, 60], nn.Tanh(), [10000, 1e-12])}
+method = {"RBF": RBF,
+          "ANN": ANN}
 
-dimensions = [4, 8, 16, 24, 32, 64, 120]
+dimensions = [4, 16, 64]
 
 for dim in dimensions:
 
     for key, interp in method.items():
 
         pod = POD('svd', rank=dim)
-        rbf = interp
+        if key == "ANN":
+            rbf = interp([24, 60], nn.ReLU(), [20000, 1e-12])
+        else:
+            rbf = interp()
         rom = ROM(db_training, pod, rbf)
         rom.fit()
 
@@ -123,7 +127,10 @@ for dim in dimensions:
                  function_encoder=nn.ReLU(),
                  function_decoder=nn.ReLU(),
                  stop_training=[1000, 1e-12])
-        rbf = interp
+        if key == "ANN":
+            rbf = interp([24, 60], nn.ReLU(), [20000, 1e-12])
+        else:
+            rbf = interp()
         rom = ROM(db_training, pod, rbf)
         rom.fit()
 
@@ -142,4 +149,4 @@ for dim in dimensions:
 
 df_res = pd.DataFrame(
     data_res, columns=['method', 'dim', 'train %', 'test %'])
-df_res.to_csv('gaussian.csv')
+df_res.to_csv('results/gaussian.csv')
