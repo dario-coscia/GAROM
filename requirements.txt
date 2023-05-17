@@ -1,0 +1,7 @@
+ezyrb==1.3.0.post2303
+matplotlib==3.6.2
+numpy==1.21.6
+pandas==1.3.4
+seaborn==0.11.2
+smithers==0.0.1
+torch==1.11.0
