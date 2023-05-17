@@ -5,31 +5,13 @@ from ezyrb import ReducedOrderModel as ROM
 import matplotlib.pyplot as plt
 import torch.nn as nn
 from utils import get_args
+from smithers.dataset import LidCavity
 
 args = get_args()
 
-
-class LidCavity(object):
-
-    def __init__(self) -> None:
-        import numpy as np
-        import matplotlib.tri as tri
-
-        params = np.load('data/params.npy')
-        snapshots_u = np.load('data/snapshots_u.npy')
-        snapshots_p = np.load('data/snapshots_p.npy')
-        coordinates = np.load('data/coordinates.npy')
-        triang = tri.Triangulation(coordinates[:, 0], coordinates[:, 1])
-
-        self.params = params.reshape((-1, 1))
-        self.snapshots = {'u': snapshots_u, 'p': snapshots_p}
-        self.triang = triang
-        self.coordinates = coordinates
-
-
 data = LidCavity()
 snap_training = 240
-key = 'u'
+key = 'mag(v)'
 
 inputs = data.snapshots[key]
 parameters = data.params
