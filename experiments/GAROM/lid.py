@@ -1,7 +1,8 @@
 from garom import GAROM
 import torch
 from plot_results import plot_POD_vs_GAROM, plot_densities_generator, save_data
-from utils import preprocessing_lidcavity, assess_model_quality, get_args, LidCavity
+from utils import preprocessing_lidcavity, assess_model_quality, get_args
+from smithers.dataset import LidCavity
 import time
 
 # get args parser

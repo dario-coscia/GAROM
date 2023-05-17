@@ -77,11 +77,6 @@ garom.load(f'{path}/generator_gaussian_{latent_dim}',
            f'{path}/discriminator_gaussian_{latent_dim}',
            map_location=torch.device('cpu'))
 
-# asses quality
-err = assess_model_quality(garom, training_loader,
-                           testing_loader, 'Gaussian', ParametricGaussian,
-                           plotting=plotting,
-                           printing=printing)
 
 if ANALYSIS:
     assess_model_quality(garom, training_loader,
