@@ -1,7 +1,9 @@
 # GAROM
 GAROM-Generative Adversarial Reduce Order Modelling
 
-This repository contains a very näive implementation of the GAROM model, as well as the experiments for reproduce the results. A more user-friendly implementation will be released in [**PINA**](https://github.com/mathLab/PINA/tree/master/pina) soon.
+This repository contains the implementation of the GAROM model, as well as the experiments for reproduce the results. A more user-friendly implementation will be released in [**PINA**](https://github.com/mathLab/PINA/tree/master/pina) soon.
+
+## Reproduce article results
 
 ### Baseline results
 Go into the `experiments/POD` folder. The programm can be lauched by:
